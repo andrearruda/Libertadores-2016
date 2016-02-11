@@ -63,8 +63,8 @@ final class StepGroupAction
                 return 'group';
             }
 
-            if ('itens' === $name) {
-                return 'item';
+            if ('matches' === $name) {
+                return 'match';
             }
 
             return $name;
@@ -139,8 +139,6 @@ final class StepGroupAction
         $data = array();
         $doc = phpQuery::newDocument($html);
 
-        $data['round'] = $doc['.lista-de-jogos .tabela-navegacao .tabela-navegacao-seletor']->text();
-
         foreach($doc['ul.lista-de-jogos-conteudo li.lista-de-jogos-item'] as $key => $section)
         {
             $pq = pq($section);
@@ -148,7 +146,7 @@ final class StepGroupAction
             $date = explode('/', substr($pq->find('.placar-jogo-informacoes')->text(), 4, 10));
             $date = $date[2] . '-' . $date[1] . '-' . $date[0] . ' ' . substr($pq->find('.placar-jogo-informacoes')->text(), -5);
 
-            $data['itens'][$key] = array(
+            $data[$key] = array(
                 'date' => $date,
                 'local' => $pq->find('.placar-jogo-informacoes span.placar-jogo-informacoes-local')->text(),
                 'teams' => array(
@@ -170,9 +168,9 @@ final class StepGroupAction
                 )
             );
 
-            if(empty($pq->find('.placar-jogo-equipes .placar-jogo-equipes-placar-mandante')->text()) && empty($pq->find('.placar-jogo-equipes .placar-jogo-equipes-placar-visitante')->text()))
+            if(strlen($data[$key]['score']['home']) == 0 && strlen($data[$key]['score']['visitor']) == 0)
             {
-                $data['itens'][$key]['score']['active'] = false;
+                $data[$key]['score']['active'] = false;
             }
         }
 
