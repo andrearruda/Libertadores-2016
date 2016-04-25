@@ -22,7 +22,7 @@ final class ChampionshipAction
     public function dispatch(Request $request, Response $response, $args)
     {
 
-        $doc = phpQuery::newDocumentFileHTML('http://globoesporte.globo.com/sp/futebol/campeonato-paulista/');
+        $doc = phpQuery::newDocumentFileHTML('http://globoesporte.globo.com/futebol/libertadores/#/classificacao-e-jogos');
         $doc->find('head')->remove();
         $doc->find('meta')->remove();
         $doc->find('noscript')->remove();

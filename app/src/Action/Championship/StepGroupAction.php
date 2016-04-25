@@ -32,7 +32,7 @@ final class StepGroupAction
 
         if($data === false)
         {
-            $doc = phpQuery::newDocumentFileHTML('http://globoesporte.globo.com/sp/futebol/campeonato-paulista/');
+            $doc = phpQuery::newDocumentFileHTML('http://globoesporte.globo.com/futebol/libertadores/#/classificacao-e-jogos');
             $doc->find('head')->remove();
             $doc->find('meta')->remove();
             $doc->find('noscript')->remove();
@@ -47,7 +47,6 @@ final class StepGroupAction
             $data = array(
                 'info' => $this->processInfo($html),
                 'groups' => $this->processGroups($html),
-                'matches' => $this->processMatches($html)
             );
 
             FileSystemCache::store($key, $data, 1800);
@@ -81,9 +80,9 @@ final class StepGroupAction
         $doc = phpQuery::newDocument($html);
 
         return array(
-            'title' => (string) S::create('Paulistão 2016')->toUpperCase(),
-            'step' => (string) S::create('Primeira fase')->toUpperCase(),
-            'round' => $doc->find('.lista-de-jogos .tabela-navegacao .tabela-navegacao-seletor')->text(),
+            'title' => (string) S::create('Libertadores 2016')->toUpperCase(),
+            'step' => (string) S::create('Fase de Grupos')->toUpperCase(),
+//            'round' => $doc->find('.lista-de-jogos .tabela-navegacao .tabela-navegacao-seletor:eq(0)')->text(),
             'createdat' => Carbon::now('America/Sao_Paulo')->toDateTimeString()
         );
     }
@@ -98,7 +97,7 @@ final class StepGroupAction
             $pq = pq($section);
 
             $teams = array();
-            for($i = 0; $i < 5; $i++)
+            for($i = 0; $i < 4; $i++)
             {
                 $teams[] = array(
                     'position' => $pq->find('table.tabela-times tbody tr:eq(' . $i . ') td:eq(0)')->text(),
@@ -121,13 +120,18 @@ final class StepGroupAction
                             'against' => $pq->find('table.tabela-pontos tbody tr:eq(' . $i . ') td:eq(6)')->text(),
                         )
                     )
+
                 );
             }
 
 
             $data[$key] = array(
-                'name' => $pq->find('header h2')->text(),
-                'teams' => $teams
+                'name' => $pq->find('header h2.gui-text-section-title:eq(0)')->text(),
+                'teams' => $teams,
+                'games' => array(
+                    'round' => $pq->find('.lista-de-jogos .tabela-navegacao .tabela-navegacao-seletor')->text(),
+                    'matches' => $this->processMatches($pq->find('.lista-de-jogos')),
+                )
             );
         }
 
