@@ -44,3 +44,6 @@ $container['logger'] = function ($c) {
 $container['App\Action\Championship\StepGroupAction'] = function ($c) {
     return new App\Action\Championship\StepGroupAction($c->get('view'), $c->get('logger'));
 };
+$container['App\Action\Championship\Last16Action'] = function ($c) {
+    return new App\Action\Championship\Last16Action($c->get('view'), $c->get('logger'));
+};

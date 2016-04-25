@@ -27,7 +27,7 @@ final class StepGroupAction
     public function dispatch(Request $request, Response $response, $args)
     {
         FileSystemCache::$cacheDir = __DIR__ . '/../../../../cache/tmp';
-        $key = FileSystemCache::generateCacheKey('cache-feed', null);
+        $key = FileSystemCache::generateCacheKey('cache-feed_StepGroup', null);
         $data = FileSystemCache::retrieve($key);
 
         if($data === false)
