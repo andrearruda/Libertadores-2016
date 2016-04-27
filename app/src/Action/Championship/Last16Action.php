@@ -26,11 +26,10 @@ final class Last16Action
 
     public function dispatch(Request $request, Response $response, $args)
     {
-        /*FileSystemCache::$cacheDir = __DIR__ . '/../../../../cache/tmp';
+        FileSystemCache::$cacheDir = __DIR__ . '/../../../../cache/tmp';
         $key = FileSystemCache::generateCacheKey('cache-feed_Last16Action', null);
-        $data = FileSystemCache::retrieve($key);*/
+        $data = FileSystemCache::retrieve($key);
 
-        $data = false;
         if($data === false)
         {
             $doc = phpQuery::newDocumentFileHTML('http://globoesporte.globo.com/futebol/libertadores/');
@@ -50,7 +49,7 @@ final class Last16Action
                 'keys' => $this->processKeys($html),
             );
 
-            //FileSystemCache::store($key, $data, 1800);
+            FileSystemCache::store($key, $data, 1800);
         }
 
         $xmlBuilder = new XmlBuilder('root');
@@ -121,14 +120,16 @@ final class Last16Action
         $data = array();
         $doc = phpQuery::newDocument($html);
 
-        $date = explode('/', substr($doc['.placar-jogo-informacoes']->text(), 4, 10));
-        $date = $date[2] . '-' . $date[1] . '-' . $date[0] . ' ' . substr($doc['.placar-jogo-informacoes']->text(), -6);
+        $date = explode('/', substr($doc['div.placar-jogo:eq(0) .placar-jogo-informacoes']->text(), 4, 10));
+        $date_1 = $date[2] . '-' . $date[1] . '-' . $date[0] . ' ' . trim(substr($doc['div.placar-jogo:eq(0) .placar-jogo-informacoes']->text(), -6));
 
+        $date = explode('/', substr($doc['div.placar-jogo:eq(1) .placar-jogo-informacoes']->text(), 4, 10));
+        $date_2 = $date[2] . '-' . $date[1] . '-' . $date[0] . ' ' . trim(substr($doc['div.placar-jogo:eq(1) .placar-jogo-informacoes']->text(), -6));
 
         return array(
             'matches' => array(
                 array(
-                    'date' => $date,
+                    'date' => $date_1,
                     'local' => $doc['div.placar-jogo:eq(0) div.placar-jogo-informacoes span.placar-jogo-informacoes-local']->text(),
                     'teams' => array(
                         array(
@@ -140,14 +141,14 @@ final class Last16Action
                             'shield' =>$doc['div.placar-jogo-equipes span.placar-jogo-equipes-item .placar-jogo-equipes-escudo-visitante']->attr('src'),
                         ),
                         'score' => array(
-                            'active' => true,
+                            'active' => false,
                             'home' => '',
                             'visitor' => ''
                         )
                     )
                 ),
                 array(
-                    'date' => $date,
+                    'date' => $date_2,
                     'local' => $doc['div.placar-jogo:eq(1) div.placar-jogo-informacoes span.placar-jogo-informacoes-local']->text(),
                     'teams' => array(
                         array(
@@ -159,7 +160,7 @@ final class Last16Action
                             'shield' =>$doc['div.placar-jogo-equipes span.placar-jogo-equipes-item .placar-jogo-equipes-escudo-mandante']->attr('src'),
                         ),
                         'score' => array(
-                            'active' => true,
+                            'active' => false,
                             'home' => '',
                             'visitor' => ''
                         )
