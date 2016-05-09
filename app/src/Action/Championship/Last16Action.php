@@ -49,7 +49,7 @@ final class Last16Action
                 'keys' => $this->processKeys($html),
             );
 
-            FileSystemCache::store($key, $data, 1800);
+            FileSystemCache::store($key, $data, 14400);
         }
 
         $xmlBuilder = new XmlBuilder('root');
