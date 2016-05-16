@@ -172,12 +172,12 @@ final class ConfrontationAction
 
         if(strlen($data['matches'][0]['teams']['score']['home']) == 0 && strlen($data['matches'][0]['teams']['score']['visitor']) == 0)
         {
-            $data['matches'][0]['teams']['score'] = false;
+            $data['matches'][0]['teams']['score']['active'] = false;
         }
 
         if(strlen($data['matches'][1]['teams']['score']['home']) == 0 && strlen($data['matches'][1]['teams']['score']['visitor']) == 0)
         {
-            $data['matches'][1]['teams']['score'] = false;
+            $data['matches'][1]['teams']['score']['active'] = false;
         }
 
         return $data;
